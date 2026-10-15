@@ -1,0 +1,9 @@
+[
+  {
+    "slug": "stop-loading-every-tool-schema",
+    "title": "Why my AI agent stopped loading 150K tokens of tool schemas",
+    "date": "2026-10-15",
+    "summary": "Connecting 10+ apps to one agent filled the context window. A small connector gateway fixed it.",
+    "tags": ["MCP", "AI agents", "automation"]
+  }
+]
