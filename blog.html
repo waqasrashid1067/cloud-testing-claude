@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog · Waqas Rashid</title>
+  <meta name="description" content="Notes on automation, AI agents, MCP and backend engineering by Waqas Rashid.">
+  <link rel="icon" href="assets/img/waqas.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="page">
+    <div class="page-top">
+      <a class="back" href="index.html">← Waqas Rashid</a>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle colour theme">theme</button>
+    </div>
+    <h1>Blog</h1>
+    <p class="lede" style="margin-bottom:40px">Notes on automation, AI agents, MCP and the backend work that keeps them reliable.</p>
+    <ul class="post-list" id="allPosts"><li class="muted">Loading posts…</li></ul>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      const list = document.getElementById("allPosts");
+      const { formatDate, escapeHtml } = window.SiteUtil;
+      fetch("blog/posts.json")
+        .then(r => r.json())
+        .then(posts => {
+          posts.sort((a, b) => b.date.localeCompare(a.date));
+          list.innerHTML = posts.map(p => `
+            <li><a href="post.html?slug=${encodeURIComponent(p.slug)}">
+              <time datetime="${p.date}">${formatDate(p.date)}</time>
+              <div><h3>${escapeHtml(p.title)}</h3><p>${escapeHtml(p.summary)}</p></div>
+            </a></li>`).join("") || '<li class="muted">No posts yet.</li>';
+        })
+        .catch(() => { list.innerHTML = '<li class="muted">Couldn\'t load posts.</li>'; });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Post · Waqas Rashid</title>
+  <link rel="icon" href="assets/img/waqas.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <article class="page">
+    <div class="page-top">
+      <a class="back" href="blog.html">← All posts</a>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle colour theme">theme</button>
+    </div>
+    <h1 id="postTitle">Loading…</h1>
+    <p class="article-meta" id="postMeta"></p>
+    <div class="prose" id="postBody"></div>
+  </article>
+
+  <script src="assets/js/markdown.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      const slug = new URLSearchParams(location.search).get("slug") || "";
+      const { formatDate, escapeHtml } = window.SiteUtil;
+      const title = document.getElementById("postTitle");
+      const meta = document.getElementById("postMeta");
+      const body = document.getElementById("postBody");
+      const fail = () => { title.textContent = "Post not found"; body.innerHTML = '<p><a href="blog.html">Back to all posts</a></p>'; };
+
+      fetch("blog/posts.json")
+        .then(r => r.json())
+        .then(posts => {
+          const post = posts.find(p => p.slug === slug);
+          if (!post) return fail();
+          document.title = post.title + " · Waqas Rashid";
+          title.textContent = post.title;
+          meta.textContent = formatDate(post.date) + (post.tags && post.tags.length ? " · " + post.tags.join(", ") : "");
+          return fetch("blog/posts/" + encodeURIComponent(post.slug) + ".md")
+            .then(r => { if (!r.ok) throw new Error(); return r.text(); })
+            .then(md => { body.innerHTML = window.renderMarkdown(md); });
+        })
+        .catch(fail);
+    })();
+  </script>
+</body>
+</html>
